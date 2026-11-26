@@ -53,6 +53,37 @@ function cleanEvent(b) {
   };
 }
 
+// ---------- Sauvegardes ----------
+const KEEP_BACKUPS = 90;
+
+async function readAll(store) {
+  const loadAll = async (prefix) => {
+    const { blobs } = await store.list({ prefix });
+    const items = await Promise.all(blobs.map((b) => store.get(b.key, { type: "json" })));
+    return items.filter(Boolean);
+  };
+  const [poles, members, posts, events] = await Promise.all([
+    store.get("poles", { type: "json" }),
+    store.get("members", { type: "json" }),
+    loadAll("post/"),
+    loadAll("event/"),
+  ]);
+  return { poles: poles || DEFAULT_POLES, members: members || DEFAULT_MEMBERS, posts, events };
+}
+
+export async function makeBackup(store, backups, reason) {
+  const data = await readAll(store);
+  const savedAt = new Date().toISOString();
+  const key = savedAt.replace(/[:.]/g, "-") + "_" + reason;
+  await backups.setJSON(key, { savedAt, reason, ...data }, {
+    metadata: { savedAt, reason, posts: data.posts.length, events: data.events.length },
+  });
+  const { blobs } = await backups.list();
+  const keys = blobs.map((b) => b.key).sort();
+  for (const old of keys.slice(0, Math.max(0, keys.length - KEEP_BACKUPS))) await backups.delete(old);
+  return { key, savedAt, reason, posts: data.posts.length, events: data.events.length };
+}
+
 export default async (req) => {
   const code =
     (globalThis.Netlify && globalThis.Netlify.env && globalThis.Netlify.env.get("ACCESS_CODE")) ||
@@ -62,6 +93,7 @@ export default async (req) => {
   }
 
   const store = getStore({ name: "cvcf50", consistency: "strong" });
+  const backups = getStore({ name: "cvcf50-backups", consistency: "strong" });
   const url = new URL(req.url);
   const [res, id] = url.pathname.replace(/^\/api\/?/, "").split("/").filter(Boolean);
 
@@ -119,6 +151,49 @@ export default async (req) => {
       const members = [...new Set(body.map((m) => str(m, 80).trim()).filter(Boolean))].slice(0, 100);
       await store.setJSON("members", members);
       return json(members);
+    }
+
+    if (req.method === "GET" && res === "backups" && !id) {
+      const { blobs } = await backups.list();
+      const list = await Promise.all(
+        blobs.map(async (b) => {
+          const m = await backups.getMetadata(b.key);
+          return { key: b.key, ...((m && m.metadata) || {}) };
+        })
+      );
+      list.sort((a, b) => b.key.localeCompare(a.key));
+      return json(list);
+    }
+
+    if (req.method === "GET" && res === "backups" && id) {
+      const data = await backups.get(id, { type: "json" });
+      if (!data) return json({ error: "Sauvegarde introuvable" }, 404);
+      return new Response(JSON.stringify(data, null, 2), {
+        headers: {
+          "content-type": "application/json; charset=utf-8",
+          "content-disposition": `attachment; filename="cvcf50-${id}.json"`,
+        },
+      });
+    }
+
+    if (req.method === "POST" && res === "backups") {
+      return json(await makeBackup(store, backups, "manuelle"), 201);
+    }
+
+    if (req.method === "POST" && res === "restore" && id) {
+      const snap = await backups.get(id, { type: "json" });
+      if (!snap) return json({ error: "Sauvegarde introuvable" }, 404);
+      // Filet de sécurité : on sauvegarde l'état actuel avant d'écraser
+      await makeBackup(store, backups, "avant-restauration");
+      for (const prefix of ["post/", "event/"]) {
+        const { blobs } = await store.list({ prefix });
+        for (const b of blobs) await store.delete(b.key);
+      }
+      await store.setJSON("poles", snap.poles || DEFAULT_POLES);
+      await store.setJSON("members", snap.members || DEFAULT_MEMBERS);
+      for (const p of snap.posts || []) if (p && p.id) await store.setJSON(`post/${p.id}`, p);
+      for (const e of snap.events || []) if (e && e.id) await store.setJSON(`event/${e.id}`, e);
+      return json({ ok: true, restored: id });
     }
 
     return json({ error: "Route inconnue" }, 404);
