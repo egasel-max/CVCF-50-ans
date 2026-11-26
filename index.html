@@ -183,6 +183,51 @@ details.road > summary .right{text-align:right;font-size:13px}
   .task .due-in,.task .acts{grid-column:2}
   .addtask{grid-template-columns:1fr}
 }
+/* Réunions */
+.meet-layout{display:grid;grid-template-columns:260px 1fr;gap:16px;align-items:start}
+.meet-list{padding:12px}
+.meet-list .mi{display:block;width:100%;text-align:left;background:none;border:0;border-radius:10px;padding:10px;cursor:pointer;margin-bottom:4px}
+.meet-list .mi:hover{background:var(--sand)}
+.meet-list .mi.on{background:var(--sand);outline:1px solid var(--line)}
+.meet-list .mi b{display:block;font-size:14px}
+.meet-list .mi span{font-size:12px;color:var(--muted)}
+.badge{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;margin-left:6px;vertical-align:1px}
+.badge.draft{background:#fdf1d8;color:var(--warn)} .badge.final{background:#e6f4ec;color:var(--ok)}
+.meet-ed{padding:20px 24px}
+.meet-ed .bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
+.meet-ed h4{font-family:Fraunces,Georgia,serif;font-size:17px;margin:22px 0 8px}
+.presents{display:flex;flex-wrap:wrap;gap:6px}
+.presents label{display:inline-flex;gap:6px;align-items:center;background:var(--sand);border:1px solid var(--line);border-radius:999px;padding:4px 12px;font-size:14px;cursor:pointer}
+.presents input{accent-color:var(--ok)}
+.dec{display:grid;grid-template-columns:1fr 210px 150px auto auto;gap:8px;align-items:start;margin-bottom:8px}
+.dec textarea{min-height:42px;height:42px}
+.dec .ok{font-size:12px;color:var(--ok);font-weight:600;padding-top:10px;white-space:nowrap}
+.pv-pole{border:1px solid var(--line);border-left:5px solid var(--c);border-radius:12px;padding:12px 14px;margin-bottom:10px;background:#fff}
+.pv-pole h5{font-family:Fraunces,Georgia,serif;font-size:16px;margin:0 0 4px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.pv-pole h5 small{font-family:Inter,sans-serif;font-weight:500;font-size:12px;color:var(--muted)}
+.pv-pole .k{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:8px 0 2px}
+.pv-pole ul{margin:0;padding-left:18px;font-size:13.5px}
+.pv-pole li{margin:2px 0}
+.pv-pole .late{font-weight:500}
+.pv-pole textarea{min-height:54px;margin-top:6px}
+.pv-doc{font-size:14px}
+.pv-doc h2{font-size:24px;margin-bottom:4px}
+.pv-doc .meta{color:var(--muted);font-size:13px;margin-bottom:12px}
+.pv-doc table{border-collapse:collapse;width:100%;font-size:13.5px}
+.pv-doc td,.pv-doc th{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+.pv-doc .comment{background:var(--sand);border-radius:8px;padding:8px 10px;margin-top:6px;white-space:pre-wrap}
+.src{display:block;font-size:11.5px;color:var(--sea)}
+.ev.meet-ev{--c:#8e5ea2;font-weight:600}
+.saving{font-size:12px;color:var(--muted)}
+@media (max-width:860px){ .meet-layout{grid-template-columns:1fr} .dec{grid-template-columns:1fr} }
+@media print{
+  body.print-pv main > .view:not(#v-meet){display:none!important}
+  body.print-pv #v-meet{display:block!important}
+  body.print-pv .meet-list, body.print-pv .meet-ed .bar, body.print-pv .no-print{display:none!important}
+  body.print-pv .meet-layout{display:block}
+  body.print-pv .card{box-shadow:none;border:0}
+  body.print-pv #v-road, body.print-pv #v-dash, body.print-pv #v-feed{display:none!important}
+}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:999px;font-size:14px;opacity:0;transition:.25s;pointer-events:none;z-index:99}
 .toast.on{opacity:1}
@@ -232,6 +277,7 @@ details.road > summary .right{text-align:right;font-size:13px}
       <button data-v="road">Feuille de route</button>
       <button data-v="feed">Fil des avancées</button>
       <button data-v="cal">Calendrier</button>
+      <button data-v="meet">Réunions</button>
       <button data-v="settings">Réglages</button>
       <span class="spacer"></span>
       <button class="btn btn-primary" id="b-new">＋ Publier mon point</button>
@@ -302,6 +348,16 @@ details.road > summary .right{text-align:right;font-size:13px}
         <h3 style="font-size:18px;margin-bottom:6px">À venir</h3>
         <div id="upcoming"></div>
       </aside>
+    </div>
+  </section>
+
+  <section class="view" id="v-meet">
+    <div class="meet-layout">
+      <aside class="card meet-list">
+        <button class="btn btn-primary btn-small" id="m-new" style="width:100%;justify-content:center;margin-bottom:10px">＋ Nouvelle réunion</button>
+        <div id="m-list"></div>
+      </aside>
+      <div class="card meet-ed" id="m-ed"><div class="empty">Choisis une réunion ou crée-en une nouvelle.<br><br>L'appli prépare le PV toute seule à partir de ce qui s'est passé depuis la réunion précédente. Il ne reste qu'à ajouter les commentaires et les décisions.</div></div>
     </div>
   </section>
 
@@ -553,6 +609,15 @@ const API = {
     }
     const n = await this.call("PATCH","tasks/" + encodeURIComponent(id), patch); S.tasks[i] = n; return n;
   },
+  async addMeeting(m){
+    if (this.mode === "demo") { const it = {...m, id:"m"+Date.now(), status:"draft", createdAt:new Date().toISOString()}; S.meetings.push(it); this.saveDemo(); return it; }
+    const it = await this.call("POST","meetings",m); S.meetings.push(it); return it;
+  },
+  async saveMeeting(m){
+    const i = S.meetings.findIndex(x => x.id === m.id);
+    if (this.mode === "demo") { S.meetings[i] = {...m, updatedAt:new Date().toISOString()}; this.saveDemo(); return S.meetings[i]; }
+    const it = await this.call("PUT","meetings/" + encodeURIComponent(m.id), m); S.meetings[i] = it; return it;
+  },
   async listBackups(){ return this.mode === "demo" ? null : this.call("GET","backups"); },
   async backupNow(){ return this.call("POST","backups"); },
   async restore(key){ return this.call("POST","restore/" + encodeURIComponent(key)); },
@@ -571,7 +636,7 @@ const API = {
 };
 
 /* ---------- État ---------- */
-let S = {poles:[], members:[], posts:[], events:[], tasks:[]};
+let S = {poles:[], members:[], posts:[], events:[], tasks:[], meetings:[]};
 let calCursor = (() => { const t = today0(); return new Date(t.getFullYear(), t.getMonth(), 1); })();
 
 const poleById = id => S.poles.find(p => p.id === id);
@@ -695,7 +760,7 @@ function renderRoad(openAll){
       const meta = t.done ? `<span class="meta">✓ ${esc(t.doneBy || "fait")}${t.doneAt ? " · " + new Date(t.doneAt).toLocaleDateString("fr-FR",{day:"numeric",month:"short"}) : ""}</span>` : "";
       return `<li class="${cls}" data-id="${esc(t.id)}">
         <input type="checkbox" data-toggle ${t.done ? "checked" : ""} aria-label="Fait">
-        <span class="tt">${esc(t.title)}${meta}</span>
+        <span class="tt">${esc(t.title)}${t.source ? `<span class="src">↳ ${esc(t.source)}</span>` : ""}${meta}</span>
         <input type="date" class="due-in" data-due value="${esc(t.due || "")}" title="Échéance">
         <span class="acts"><button data-edit title="Modifier l'intitulé">✎</button><button data-move title="Changer de domaine">⇄</button><button data-deltask title="Supprimer">✕</button></span>
       </li>`;
@@ -718,6 +783,206 @@ function renderRoad(openAll){
   $("#road").innerHTML = html || `<div class="card empty">Aucune tâche ne correspond.</div>`;
 }
 
+/* ===================== Réunions & PV ===================== */
+let curMeetingId = null, saveTimer = null;
+const longDate = d => fmtDate(d, {weekday:"long", day:"numeric", month:"long", year:"numeric"});
+const meetingsSorted = () => [...S.meetings].sort((a,b) => b.date.localeCompare(a.date) || (b.createdAt||"").localeCompare(a.createdAt||""));
+function prevMeeting(m){
+  return [...S.meetings].filter(x => x.id !== m.id && x.date < m.date).sort((a,b) => b.date.localeCompare(a.date))[0] || null;
+}
+function buildSnapshot(m){
+  const prev = prevMeeting(m);
+  const from = prev ? new Date(parseIso(prev.date).getTime() + 864e5) : new Date(0); // lendemain de la réunion précédente
+  const to = new Date(Math.max(Date.now(), parseIso(m.date).getTime() + 864e5 - 1));
+  const inP = d => d && new Date(d) >= from && new Date(d) <= to;
+  const mday = m.date, horizon = iso(new Date(parseIso(m.date).getTime() + 15*864e5));
+  const poles = S.poles.map(p => {
+    const ts = tasksOf(p.id);
+    const posts = S.posts.filter(x => x.pole === p.id).sort((a,b) => a.createdAt.localeCompare(b.createdAt));
+    const lastBudget = [...posts].reverse().find(x => typeof x.budget === "number");
+    const lastPost = posts[posts.length - 1];
+    return {
+      id: p.id, name: p.name, lead: p.lead || "",
+      progress: taskStats(ts),
+      status: lastPost ? lastPost.status : "",
+      budget: lastBudget ? lastBudget.budget : null,
+      done: ts.filter(t => t.done && inP(t.doneAt)).map(t => ({title:t.title, by:t.doneBy, at:t.doneAt})),
+      late: sortTasks(ts.filter(t => !t.done && t.due && t.due < mday)).map(t => ({title:t.title, due:t.due})),
+      upcoming: sortTasks(ts.filter(t => !t.done && t.due && t.due >= mday && t.due <= horizon)).map(t => ({title:t.title, due:t.due})),
+      posts: posts.filter(x => inP(x.createdAt)).map(x => ({author:x.author, status:x.status, text:x.text, issues:x.issues, at:x.createdAt}))
+    };
+  });
+  return {generatedAt: new Date().toISOString(), from: prev ? iso(from) : "", prevTitle: prev ? (prev.title || "") : "", prevDate: prev ? prev.date : "", totals: taskStats(S.tasks), poles};
+}
+
+function renderMeetList(){
+  const list = meetingsSorted();
+  $("#m-list").innerHTML = list.map(m => `<button class="mi ${m.id === curMeetingId ? "on" : ""}" data-m="${esc(m.id)}">
+      <b>${esc(fmtDate(m.date))}<span class="badge ${m.status === "final" ? "final" : "draft"}">${m.status === "final" ? "Validé" : "Brouillon"}</span></b>
+      <span>${esc(m.title || "Réunion du comité")}</span></button>`).join("") || '<div class="muted" style="font-size:13px;padding:6px">Aucune réunion pour l\'instant.</div>';
+}
+function curMeeting(){ return S.meetings.find(m => m.id === curMeetingId) || null; }
+
+function snapBlock(sp, m, editable){
+  const color = poleColor(sp.id);
+  const li = arr => arr.length ? `<ul>${arr.join("")}</ul>` : "";
+  const done = li(sp.done.map(d => `<li>✓ ${esc(d.title)}<span class="muted"> · ${esc(d.by || "—")}, ${new Date(d.at).toLocaleDateString("fr-FR",{day:"numeric",month:"short"})}</span></li>`));
+  const late = li(sp.late.map(d => `<li class="late">${esc(d.title)} <span class="muted">(prévu le ${esc(shortDate(d.due))})</span></li>`));
+  const up = li(sp.upcoming.map(d => `<li>${esc(d.title)} <span class="muted">(${esc(shortDate(d.due))})</span></li>`));
+  const posts = li(sp.posts.map(x => `<li><b>${esc(x.author || "—")}</b> <span class="muted">${new Date(x.at).toLocaleDateString("fr-FR",{day:"numeric",month:"short"})}</span> · ${esc(STATUS[x.status] || "")}<br>${esc(x.text)}${x.issues ? `<br><span class="late">⚑ ${esc(x.issues)}</span>` : ""}</li>`));
+  const comment = (m.comments || {})[sp.id] || "";
+  const st = sp.status ? `<span class="pill s-${sp.status}">${STATUS[sp.status]}</span>` : "";
+  return `<div class="pv-pole" style="--c:${color}">
+    <h5><span>${esc(sp.name)} ${st}</span><small>${sp.lead ? "Resp. " + esc(sp.lead) + " · " : ""}${sp.progress.done}/${sp.progress.total} tâches (${sp.progress.pct} %)${sp.budget != null ? " · budget engagé " + fmtMoney(sp.budget) : ""}</small></h5>
+    ${done ? `<div class="k">Fait depuis la dernière réunion</div>${done}` : `<div class="k">Fait depuis la dernière réunion</div><div class="muted" style="font-size:13px">Rien de coché.</div>`}
+    ${posts ? `<div class="k">Points publiés</div>${posts}` : ""}
+    ${late ? `<div class="k" style="color:var(--block)">En retard</div>${late}` : ""}
+    ${up ? `<div class="k">Échéances des 15 prochains jours</div>${up}` : ""}
+    ${editable
+      ? `<textarea data-comment="${esc(sp.id)}" placeholder="Commentaire de séance pour ce domaine (facultatif)">${esc(comment)}</textarea>`
+      : (comment ? `<div class="comment">${esc(comment)}</div>` : "")}
+  </div>`;
+}
+
+function renderMeeting(){
+  renderMeetList();
+  const m = curMeeting(), box = $("#m-ed");
+  if (!m) { box.innerHTML = `<div class="empty">Choisis une réunion ou crée-en une nouvelle.<br><br>L'appli prépare le PV toute seule à partir de ce qui s'est passé depuis la réunion précédente. Il ne reste qu'à ajouter les commentaires et les décisions.</div>`; return; }
+  const final = m.status === "final";
+  const snap = m.snapshot || {poles:[], totals:{done:0,total:0,pct:0}};
+  const present = new Set(m.present || []);
+  const absent = S.members.filter(n => !present.has(n));
+  const period = snap.prevDate ? `depuis la réunion du ${fmtDate(snap.prevDate)}` : "depuis le lancement";
+  const poleOpts = sel => `<option value="">— domaine —</option>` + S.poles.map(p => `<option value="${esc(p.id)}" ${p.id === sel ? "selected" : ""}>${esc(p.name)}</option>`).join("");
+  const decisions = m.decisions || [];
+
+  const header = `<div class="bar">
+      ${final
+        ? `<span class="badge final" style="font-size:13px">PV validé${m.finalizedBy ? " par " + esc(m.finalizedBy) : ""}${m.finalizedAt ? " le " + new Date(m.finalizedAt).toLocaleDateString("fr-FR") : ""}</span>
+           <span style="flex:1"></span>
+           <button class="btn btn-ghost btn-small" id="m-print">Imprimer / PDF</button>
+           <button class="btn btn-ghost btn-small" id="m-reopen">Rouvrir</button>`
+        : `<span class="badge draft" style="font-size:13px">Brouillon</span><span class="saving" id="m-saving"></span>
+           <span style="flex:1"></span>
+           <button class="btn btn-ghost btn-small" id="m-refresh" title="Recalculer le bilan avec les données actuelles">↻ Rafraîchir le bilan</button>
+           <button class="btn btn-ghost btn-small" id="m-print">Imprimer / PDF</button>
+           <button class="btn btn-ghost btn-small" id="m-del">Supprimer</button>
+           <button class="btn btn-primary btn-small" id="m-final">Valider le PV</button>`}
+    </div>`;
+
+  const head = final
+    ? `<div class="pv-doc"><h2>${esc(m.title || "Réunion du comité")}</h2>
+        <div class="meta">${esc(longDate(m.date))}${m.place ? " · " + esc(m.place) : ""} · Comité d'organisation des 50 ans du CVCF</div>
+        <table><tr><th style="width:140px">Présents</th><td>${esc([...(m.present||[]), ...(m.otherPresent ? [m.otherPresent] : [])].join(", ") || "—")}</td></tr>
+        <tr><th>Absents / excusés</th><td>${esc(absent.join(", ") || "—")}</td></tr>
+        <tr><th>Secrétaire</th><td>${esc(m.secretary || "—")}</td></tr>
+        <tr><th>Avancement global</th><td>${snap.totals.done}/${snap.totals.total} tâches (${snap.totals.pct} %) · bilan établi ${esc(period)}</td></tr></table>
+        ${m.general ? `<h4>Ordre du jour et points généraux</h4><div class="comment">${esc(m.general)}</div>` : ""}</div>`
+    : `<div class="two">
+        <div><label class="f">Intitulé</label><input type="text" data-f="title" value="${esc(m.title || "")}"></div>
+        <div><label class="f">Date</label><input type="date" data-f="date" value="${esc(m.date)}"></div>
+      </div>
+      <div class="two">
+        <div><label class="f">Lieu / format</label><input type="text" data-f="place" value="${esc(m.place || "")}" placeholder="Visio, Paris…"></div>
+        <div><label class="f">Secrétaire de séance</label><input type="text" data-f="secretary" list="members-list" value="${esc(m.secretary || "")}"></div>
+      </div>
+      <label class="f">Présents</label>
+      <div class="presents">${S.members.map(n => `<label><input type="checkbox" data-present value="${esc(n)}" ${present.has(n) ? "checked" : ""}> ${esc(n)}</label>`).join("")}</div>
+      <input type="text" data-f="otherPresent" value="${esc(m.otherPresent || "")}" placeholder="Autres présents (invités…)" style="margin-top:8px">
+      <label class="f">Ordre du jour et points généraux</label>
+      <textarea data-f="general" placeholder="Ordre du jour, informations générales, échanges…">${esc(m.general || "")}</textarea>`;
+
+  const decHtml = final
+    ? (decisions.length ? `<h4>Décisions</h4><table class="pv-doc"><tr><th>Décision</th><th>Domaine</th><th>Échéance</th></tr>${decisions.map(d => `<tr><td>${esc(d.text)}${d.taskId ? ' <span class="src" style="display:inline">· tâche créée</span>' : ""}</td><td>${esc(d.pole ? poleName(d.pole) : "—")}</td><td>${d.due ? esc(shortDate(d.due)) : "—"}</td></tr>`).join("")}</table>` : "")
+    : `<h4>Décisions</h4>
+      <div id="m-decs">${decisions.map(d => `<div class="dec" data-dec="${esc(d.id)}">
+          <textarea data-d="text" placeholder="Décision prise…" ${d.taskId ? "disabled" : ""}>${esc(d.text || "")}</textarea>
+          <select data-d="pole" ${d.taskId ? "disabled" : ""}>${poleOpts(d.pole)}</select>
+          <input type="date" data-d="due" value="${esc(d.due || "")}" ${d.taskId ? "disabled" : ""}>
+          ${d.taskId ? `<span class="ok">✓ tâche créée</span>` : `<button class="btn btn-ghost btn-small" data-mktask title="Ajouter cette décision à la feuille de route">→ Tâche</button>`}
+          <button class="del" data-deldec title="Retirer">✕</button>
+        </div>`).join("")}</div>
+      <button class="btn btn-ghost btn-small" id="m-adddec">＋ Ajouter une décision</button>
+      <div class="hint">« → Tâche » ajoute la décision à la feuille de route du domaine choisi, avec son échéance.</div>`;
+
+  const bilan = `<h4>Bilan par domaine <span class="muted" style="font-family:Inter;font-size:13px;font-weight:400">— ${esc(period)} · avancement global ${snap.totals.done}/${snap.totals.total} (${snap.totals.pct} %)</span></h4>
+    ${snap.poles.map(sp => snapBlock(sp, m, !final)).join("")}`;
+
+  box.innerHTML = header + head + (final ? decHtml + bilan : bilan + decHtml);
+}
+
+function scheduleSave(){
+  const m = curMeeting(); if (!m || m.status === "final") return;
+  const el = $("#m-saving"); if (el) el.textContent = "…";
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(async () => {
+    try { await API.saveMeeting(curMeeting()); const e = $("#m-saving"); if (e) e.textContent = "Enregistré"; renderMeetList(); }
+    catch (err) { toast(err.message); }
+  }, 800);
+}
+async function flushSave(){ clearTimeout(saveTimer); const m = curMeeting(); if (m && m.status !== "final") await API.saveMeeting(m); }
+
+$("#m-new").addEventListener("click", async () => {
+  const d = iso(today0());
+  const m = {date: d, title: "Réunion du comité", place: "", secretary: me(), present: me() ? [me()] : [], otherPresent: "", general: "", comments: {}, decisions: []};
+  m.snapshot = buildSnapshot(m);
+  try { const it = await API.addMeeting(m); curMeetingId = it.id; renderMeeting(); renderCal(); toast("Réunion créée : le bilan est prêt"); }
+  catch (err) { toast(err.message); }
+});
+$("#m-list").addEventListener("click", async e => {
+  const b = e.target.closest("[data-m]"); if (!b) return;
+  try { await flushSave(); } catch {}
+  curMeetingId = b.dataset.m; renderMeeting();
+});
+$("#m-ed").addEventListener("input", e => {
+  const m = curMeeting(); if (!m || m.status === "final") return;
+  const t = e.target;
+  if (t.dataset.f) m[t.dataset.f] = t.value;
+  else if (t.dataset.comment) { m.comments = m.comments || {}; m.comments[t.dataset.comment] = t.value; }
+  else if (t.dataset.d) { const d = (m.decisions || []).find(x => x.id === t.closest("[data-dec]").dataset.dec); if (d) d[t.dataset.d] = t.value; }
+  else if (t.matches("[data-present]")) m.present = [...document.querySelectorAll("#m-ed [data-present]:checked")].map(x => x.value);
+  else return;
+  scheduleSave();
+});
+$("#m-ed").addEventListener("change", e => {
+  const m = curMeeting(); if (!m) return;
+  if (e.target.dataset.f === "date") { m.snapshot = buildSnapshot(m); renderMeeting(); renderCal(); scheduleSave(); }
+  else if (e.target.matches("[data-present]") || e.target.dataset.d === "pole") e.target.dispatchEvent(new Event("input", {bubbles:true}));
+});
+$("#m-ed").addEventListener("click", async e => {
+  const m = curMeeting(); if (!m) return;
+  const t = e.target;
+  try {
+    if (t.closest("#m-refresh")) { m.snapshot = buildSnapshot(m); renderMeeting(); scheduleSave(); toast("Bilan recalculé"); }
+    else if (t.closest("#m-print")) { await flushSave().catch(()=>{}); document.body.classList.add("print-pv"); window.print(); setTimeout(() => document.body.classList.remove("print-pv"), 500); }
+    else if (t.closest("#m-adddec")) { m.decisions = m.decisions || []; m.decisions.push({id:"d"+Date.now().toString(36), text:"", pole:"", due:"", taskId:""}); renderMeeting(); scheduleSave(); const last = [...document.querySelectorAll("#m-decs textarea")].pop(); if (last) last.focus(); }
+    else if (t.closest("[data-deldec]")) { const id = t.closest("[data-dec]").dataset.dec; m.decisions = m.decisions.filter(d => d.id !== id); renderMeeting(); scheduleSave(); }
+    else if (t.closest("[data-mktask]")) {
+      const id = t.closest("[data-dec]").dataset.dec, d = m.decisions.find(x => x.id === id);
+      if (!d.text.trim()) { toast("Écris d'abord la décision"); return; }
+      if (!d.pole) { toast("Choisis le domaine concerné"); return; }
+      const task = await API.addTask({pole: d.pole, title: d.text.trim(), due: d.due || "", author: me(), order: 999,
+        source: `Décision du ${fmtDate(m.date, {day:"numeric", month:"short", year:"numeric"})}`, sourceMeeting: m.id});
+      d.taskId = task.id; await API.saveMeeting(m); renderMeeting(); renderKpis(); renderDash(); renderRoad(); renderCal(); toast("Ajoutée à la feuille de route");
+    }
+    else if (t.closest("#m-del")) {
+      if (!confirm("Supprimer ce brouillon de PV ?")) return;
+      await API.del("meetings", m.id); curMeetingId = null; renderMeeting(); renderCal(); toast("Supprimé");
+    }
+    else if (t.closest("#m-final")) {
+      const pending = (m.decisions || []).filter(d => d.text.trim() && !d.taskId).length;
+      const msg = `Valider le PV ? Il sera figé (on peut le rouvrir).\n\nLe bilan sera recalculé une dernière fois avec les données actuelles.` + (pending ? `\n\nAttention : ${pending} décision(s) n'ont pas été transformées en tâche.` : "");
+      if (!confirm(msg)) return;
+      m.snapshot = buildSnapshot(m); m.status = "final"; m.finalizedAt = new Date().toISOString(); m.finalizedBy = me();
+      await API.saveMeeting(m); renderMeeting(); toast("PV validé");
+    }
+    else if (t.closest("#m-reopen")) {
+      if (!confirm("Rouvrir ce PV pour le modifier ?")) return;
+      m.status = "draft"; await API.saveMeeting(m); renderMeeting();
+    }
+  } catch (err) { toast(err.message); }
+});
+
 function calendarItems(){
   // Toutes les dates à afficher, indexées par jour ISO
   const m = {};
@@ -730,6 +995,7 @@ function calendarItems(){
     let guard = 0;
     while (d <= end && guard++ < 60) { add(iso(d), {kind:"ev", title:e.title, pole:e.pole, id:e.id, note:e.note}); d = new Date(d.getFullYear(), d.getMonth(), d.getDate()+1); }
   }
+  for (const m of S.meetings) if (m.date) add(m.date, {kind:"meet", title: m.title || "Réunion du comité"});
   // Tâches non faites : regroupées par date
   const byDate = {};
   for (const t of S.tasks) if (!t.done && t.due) (byDate[t.due] = byDate[t.due] || []).push(t);
@@ -759,7 +1025,7 @@ function renderCal(){
     if (isRep) inner += `<div class="ev rep">Reporting</div>`;
     for (const it of list.slice(0, 3)) {
       const style = it.pole ? `style="--c:${poleColor(it.pole)}"` : "";
-      const c = it.kind === "big" ? "big" : it.kind === "ms" ? "ms" : it.kind === "task" ? "task-ev" : "";
+      const c = it.kind === "big" ? "big" : it.kind === "ms" ? "ms" : it.kind === "task" ? "task-ev" : it.kind === "meet" ? "meet-ev" : "";
       inner += `<div class="ev ${c}" ${style} title="${esc(it.title)}">${it.kind === "dl" ? "⏱ " : ""}${esc(it.title)}</div>`;
     }
     if (list.length > 3) inner += `<div class="muted" style="font-size:11px">+${list.length-3} autre(s)</div>`;
@@ -774,7 +1040,7 @@ function renderCal(){
   for (const k of up) for (const it of items[k]) rows.push({k, it});
   $("#upcoming").innerHTML = rows.slice(0, 10).map(({k,it}) => {
     const d = parseIso(k);
-    const sub = it.pole ? poleName(it.pole) : (it.kind === "big" ? "Événement" : it.kind === "task" ? "Feuille de route" : "Jalon");
+    const sub = it.pole ? poleName(it.pole) : (it.kind === "big" ? "Événement" : it.kind === "task" ? "Feuille de route" : it.kind === "meet" ? "Réunion" : "Jalon");
     const del = it.kind === "ev" ? ` <button class="del" style="font-size:11px" data-del-event="${esc(it.id)}">supprimer</button>` : "";
     return `<div class="item"><div class="d"><b>${d.getDate()}</b><span>${d.toLocaleDateString("fr-FR",{month:"short"})}</span></div>
       <div class="t">${esc(it.title)}<small>${esc(sub)}${it.note ? " · " + esc(it.note) : ""}${del}</small></div></div>`;
@@ -807,7 +1073,7 @@ async function renderBackups(){
     if (!list || !list.length) { box.innerHTML = '<div class="b muted">Pas encore de sauvegarde. La première sera faite cette nuit, ou maintenant avec le bouton ci-dessus.</div>'; return; }
     box.innerHTML = list.map(b => {
       const d = b.savedAt ? new Date(b.savedAt).toLocaleString("fr-FR",{day:"numeric",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"}) : b.key;
-      const n = (b.posts ?? "?") + " points · " + (b.events ?? "?") + " dates" + (b.tasks != null ? ` · ${b.done ?? 0}/${b.tasks} tâches` : "");
+      const n = (b.posts ?? "?") + " points · " + (b.events ?? "?") + " dates" + (b.tasks != null ? ` · ${b.done ?? 0}/${b.tasks} tâches` : "") + (b.meetings ? ` · ${b.meetings} PV` : "");
       return `<div class="b"><span class="when"><b>${esc(d)}</b><br><span class="muted">${esc(n)}</span></span>
         <span class="tag">${esc(REASONS[b.reason] || b.reason || "")}</span>
         <button class="btn btn-ghost btn-small" data-dl="${esc(b.key)}">Télécharger</button>
@@ -823,7 +1089,7 @@ function fillPoleSelects(){
 }
 
 function renderAll(){
-  renderKpis(); renderDash(); renderFeedFilter(); renderFeed(); renderRoadFilter(); renderRoad(); renderCal(); renderSettings(); fillPoleSelects();
+  renderKpis(); renderDash(); renderFeedFilter(); renderFeed(); renderRoadFilter(); renderRoad(); renderCal(); if (!document.activeElement || !document.activeElement.closest || !document.activeElement.closest("#m-ed")) renderMeeting(); renderSettings(); fillPoleSelects();
   const b = $("#banner");
   if (API.mode === "demo") {
     b.hidden = false;
@@ -1021,7 +1287,7 @@ async function boot(){
     S = await API.load();
     S.poles = S.poles && S.poles.length ? S.poles : DEFAULT_POLES.map(p => ({...p}));
     S.members = Array.isArray(S.members) ? S.members : [...DEFAULT_MEMBERS];
-    S.posts = S.posts || []; S.events = S.events || [];
+    S.posts = S.posts || []; S.events = S.events || []; S.meetings = S.meetings || [];
     if (!Array.isArray(S.tasks)) { S.tasks = API.mode === "demo" ? seedTasksLocal(true) : []; if (API.mode === "demo") API.saveDemo(); }
     renderAll();
   } catch (e) {
@@ -1033,7 +1299,10 @@ async function boot(){
   }
 }
 boot();
-setInterval(() => { if (API.mode === "remote" && !document.querySelector("dialog[open]")) boot(); }, 60000);
+setInterval(() => {
+  const editingPV = document.querySelector("#v-meet.on") && curMeeting() && curMeeting().status !== "final";
+  if (API.mode === "remote" && !document.querySelector("dialog[open]") && !editingPV) boot();
+}, 60000);
 })();
 </script>
 </body>
