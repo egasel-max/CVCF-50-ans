@@ -29,7 +29,7 @@ header.top::after{content:"";position:absolute;right:-60px;top:-40px;width:320px
 .brand svg{flex:none}
 .brand h1{font-size:26px;line-height:1.1}
 .brand p{margin:2px 0 0;opacity:.85;font-size:14px}
-.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:16px 0 20px;position:relative;z-index:1}
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;padding:16px 0 20px;position:relative;z-index:1}
 .kpi{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:12px 14px;backdrop-filter:blur(4px)}
 .kpi .v{font-family:Fraunces,Georgia,serif;font-size:28px;font-weight:700;line-height:1.1}
 .kpi .l{font-size:12px;text-transform:uppercase;letter-spacing:.06em;opacity:.85}
@@ -139,6 +139,50 @@ details.more summary{cursor:pointer;font-weight:600;font-size:14px}
 .backups .b .when{flex:1}
 .backups .b .tag{font-size:11px;padding:2px 7px;border-radius:999px;background:var(--sand);color:var(--muted)}
 .backups .b a,.backups .b button{font-size:12px}
+/* Feuille de route */
+.prog{height:6px;background:#e9e2d3;border-radius:999px;overflow:hidden}
+.prog > i{display:block;height:100%;background:var(--c,var(--ok));border-radius:999px;transition:width .3s}
+.pole .tasksum{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:2px}
+.road-tools{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.road-tools select,.road-tools input[type=text]{width:auto}
+.road-tools input[type=text]{min-width:220px;flex:1}
+.road-head{padding:14px 18px;margin-bottom:14px;display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.road-head .big{font-family:Fraunces,Georgia,serif;font-size:26px;font-weight:700}
+.road-head .prog{flex:1;min-width:200px;height:10px}
+details.road{margin-bottom:12px;border-left:5px solid var(--c);overflow:hidden}
+details.road > summary{list-style:none;cursor:pointer;padding:14px 18px;display:grid;grid-template-columns:1fr 220px;gap:6px 16px;align-items:center}
+details.road > summary::-webkit-details-marker{display:none}
+details.road > summary h3{font-size:18px;display:flex;align-items:center;gap:8px}
+details.road > summary h3::before{content:"▸";font-size:13px;color:var(--muted);transition:transform .2s}
+details.road[open] > summary h3::before{transform:rotate(90deg)}
+details.road > summary .sub{font-size:13px;color:var(--muted)}
+details.road > summary .right{text-align:right;font-size:13px}
+.tasks{list-style:none;margin:0;padding:0 8px 6px;border-top:1px solid var(--line)}
+.task{display:grid;grid-template-columns:auto 1fr auto auto;gap:10px;align-items:center;padding:8px 10px;border-bottom:1px dashed var(--line)}
+.task:last-child{border-bottom:0}
+.task input[type=checkbox]{width:18px;height:18px;accent-color:var(--ok);cursor:pointer}
+.task .tt{font-size:14px;line-height:1.4}
+.task .meta{display:block;font-size:11.5px;color:var(--ok)}
+.task.done .tt{color:var(--muted);text-decoration:line-through;text-decoration-color:#b8c2cc}
+.task.late .tt{color:var(--block)}
+.due-in{border:1px solid transparent;background:var(--sand);border-radius:999px;padding:3px 8px;font-size:12px;width:auto;color:#33475b;cursor:pointer}
+.due-in:hover{border-color:var(--line)}
+.task.late .due-in{background:#fbe3e0;color:var(--block);font-weight:600}
+.task.done .due-in{opacity:.5}
+.task .acts{display:flex;gap:2px;opacity:.35;transition:opacity .2s}
+.task:hover .acts{opacity:1}
+.task .acts button{background:none;border:0;cursor:pointer;color:var(--muted);font-size:14px;padding:3px 5px;border-radius:6px}
+.task .acts button:hover{background:var(--sand);color:var(--ink)}
+.addtask{display:grid;grid-template-columns:1fr auto auto;gap:8px;padding:10px 18px 16px;background:#fbf8f1;border-top:1px solid var(--line)}
+.addtask input[type=date]{width:auto}
+.ev.task-ev{--c:#6b7a8a;font-style:italic}
+@media (max-width:860px){
+  details.road > summary{grid-template-columns:1fr}
+  details.road > summary .right{text-align:left}
+  .task{grid-template-columns:auto 1fr;}
+  .task .due-in,.task .acts{grid-column:2}
+  .addtask{grid-template-columns:1fr}
+}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:999px;font-size:14px;opacity:0;transition:.25s;pointer-events:none;z-index:99}
 .toast.on{opacity:1}
@@ -179,11 +223,13 @@ details.more summary{cursor:pointer;font-weight:600;font-size:14px}
     <div class="kpis">
       <div class="kpi"><div class="v" id="k-days">—</div><div class="l">jours avant le jour J</div></div>
       <div class="kpi"><div class="v" id="k-rep">—</div><div class="l">prochain reporting</div></div>
+      <div class="kpi"><div class="v" id="k-tasks">—</div><div class="l">tâches faites</div></div>
       <div class="kpi"><div class="v" id="k-alerts">—</div><div class="l">domaines en alerte</div></div>
       <div class="kpi"><div class="v" id="k-budget">—</div><div class="l">budget engagé déclaré</div></div>
     </div>
     <nav class="tabs">
       <button data-v="dash" class="on">Tableau de bord</button>
+      <button data-v="road">Feuille de route</button>
       <button data-v="feed">Fil des avancées</button>
       <button data-v="cal">Calendrier</button>
       <button data-v="settings">Réglages</button>
@@ -198,6 +244,25 @@ details.more summary{cursor:pointer;font-weight:600;font-size:14px}
   <section class="view on" id="v-dash">
     <div class="section-title"><h2>Les domaines</h2><span class="muted" id="dash-sub"></span></div>
     <div class="grid" id="poles"></div>
+  </section>
+
+  <section class="view" id="v-road">
+    <div class="card road-head" id="road-head"></div>
+    <div class="road-tools">
+      <select id="r-pole"></select>
+      <select id="r-status">
+        <option value="todo">À faire</option>
+        <option value="late">En retard</option>
+        <option value="soon">À faire sous 15 jours</option>
+        <option value="done">Faites</option>
+        <option value="">Toutes</option>
+      </select>
+      <input type="text" id="r-q" placeholder="Rechercher une tâche…">
+      <button class="btn btn-ghost btn-small" id="r-expand">Tout déplier</button>
+      <button class="btn btn-ghost btn-small" id="r-collapse">Tout replier</button>
+      <button class="btn btn-ghost btn-small" onclick="window.print()">Imprimer / PDF</button>
+    </div>
+    <div id="road"></div>
   </section>
 
   <section class="view" id="v-feed">
@@ -359,6 +424,7 @@ const DEFAULT_POLES = [
   {id:"benevoles",name:"Bénévoles & accueil",lead:""}
 ];
 const DEFAULT_MEMBERS = ["Bruno Claes","Sylvie Claes","Gérard Vauchamp","Jean-Paul Arnould","Pierre Lesage"];
+const DEFAULT_TASKS = [{"id": "t001", "pole": "pilotage", "title": "Fixer l'ambition : fête interne, festival grand public ou rassemblement international", "due": "2026-12-03", "order": 0}, {"id": "t002", "pole": "pilotage", "title": "Définir les publics visés : membres, clubs français, invités étrangers, grand public, scolaires, élus", "due": "2026-12-03", "order": 1}, {"id": "t003", "pole": "pilotage", "title": "Arrêter le format du week-end (ex. samedi vol + soirée des 50 ans, dimanche festival ouvert à tous)", "due": "2026-12-03", "order": 2}, {"id": "t004", "pole": "pilotage", "title": "Fixer les objectifs chiffrés : participants, cerfs-volants, visiteurs, retombées presse", "due": "2026-12-03", "order": 3}, {"id": "t005", "pole": "pilotage", "title": "Nommer le chef de projet", "due": "2026-12-03", "order": 4}, {"id": "t006", "pole": "pilotage", "title": "Nommer un responsable pour chaque domaine et le saisir dans les Réglages", "due": "2026-12-03", "order": 5}, {"id": "t007", "pole": "pilotage", "title": "Fixer les règles de décision : à partir de quel montant une dépense doit être validée, et par qui", "due": "2026-12-03", "order": 6}, {"id": "t008", "pole": "pilotage", "title": "Valider le calendrier général et les jalons", "due": "2026-12-03", "order": 7}, {"id": "t009", "pole": "pilotage", "title": "Fixer la date de la première fiche de reporting (15 décembre)", "due": "2026-12-03", "order": 8}, {"id": "t010", "pole": "pilotage", "title": "Diffuser le compte rendu de la réunion du 3 décembre", "due": "2026-12-10", "order": 9}, {"id": "t011", "pole": "pilotage", "title": "Mettre en place le dossier partagé (courriers, devis, conventions, photos)", "due": "2026-12-15", "order": 10}, {"id": "t012", "pole": "pilotage", "title": "Organiser la visio de reporting du 1er et du 15 (30 min max) et envoyer les liens", "due": "2026-12-15", "order": 11}, {"id": "t013", "pole": "pilotage", "title": "Point d'étape : lieu arrêté et budget validé", "due": "2027-01-31", "order": 12}, {"id": "t014", "pole": "pilotage", "title": "Point d'étape : subventions déposées, conventions signées", "due": "2027-02-28", "order": 13}, {"id": "t015", "pole": "pilotage", "title": "Point d'étape : partenaires bouclés, programme fixé, inscriptions ouvertes", "due": "2027-03-31", "order": 14}, {"id": "t016", "pole": "pilotage", "title": "Point d'étape : dossier préfecture, assurances, logistique détaillée", "due": "2027-04-30", "order": 15}, {"id": "t017", "pole": "pilotage", "title": "Réunion de coordination finale avec tous les responsables (J-7)", "due": "2027-05-15", "order": 16}, {"id": "t018", "pole": "pilotage", "title": "Désigner le PC organisation et la chaîne de décision pendant le week-end", "due": "2027-05-15", "order": 17}, {"id": "t019", "pole": "pilotage", "title": "Organiser la réunion de bilan", "due": "2027-06-30", "order": 18}, {"id": "t020", "pole": "pilotage", "title": "Remercier partenaires, collectivités, bénévoles et participants", "due": "2027-06-30", "order": 19}, {"id": "t021", "pole": "finances", "title": "Voter le budget spécial du CVCF pour les 50 ans (en plus des 20 000 € de fonds propres)", "due": "2026-12-03", "order": 0}, {"id": "t022", "pole": "finances", "title": "Préparer le modèle de budget prévisionnel par poste (dépenses / recettes)", "due": "2026-12-15", "order": 1}, {"id": "t023", "pole": "finances", "title": "Chiffrer : location du site et de la salle", "due": "2027-01-31", "order": 2}, {"id": "t024", "pole": "finances", "title": "Chiffrer : équipements (barnums, sono, électricité, toilettes)", "due": "2027-01-31", "order": 3}, {"id": "t025", "pole": "finances", "title": "Chiffrer : déplacements et hébergement des invités", "due": "2027-01-31", "order": 4}, {"id": "t026", "pole": "finances", "title": "Chiffrer : soirée anniversaire", "due": "2027-01-31", "order": 5}, {"id": "t027", "pole": "finances", "title": "Chiffrer : exposition historique", "due": "2027-01-31", "order": 6}, {"id": "t028", "pole": "finances", "title": "Chiffrer : communication (identité, impression, web)", "due": "2027-01-31", "order": 7}, {"id": "t029", "pole": "finances", "title": "Chiffrer : assurances", "due": "2027-01-31", "order": 8}, {"id": "t030", "pole": "finances", "title": "Chiffrer : poste de secours", "due": "2027-01-31", "order": 9}, {"id": "t031", "pole": "finances", "title": "Chiffrer : cadeaux et souvenirs (pin's, médaille, timbre…)", "due": "2027-01-31", "order": 10}, {"id": "t032", "pole": "finances", "title": "Chiffrer : droits d'huissier si tentative de record", "due": "2027-01-31", "order": 11}, {"id": "t033", "pole": "finances", "title": "Prévoir une ligne d'imprévus (10 %)", "due": "2027-01-31", "order": 12}, {"id": "t034", "pole": "finances", "title": "Valoriser les apports en nature de la commune dans le budget", "due": "2027-01-31", "order": 13}, {"id": "t035", "pole": "finances", "title": "Préparer trois scénarios de budget (bas, moyen, haut) et ce qu'on sacrifie dans chacun", "due": "2027-01-31", "order": 14}, {"id": "t036", "pole": "finances", "title": "Faire valider le budget prévisionnel", "due": "2027-01-31", "order": 15}, {"id": "t037", "pole": "finances", "title": "Établir le plan de trésorerie : qui avance l'argent en attendant les subventions", "due": "2027-02-28", "order": 16}, {"id": "t038", "pole": "finances", "title": "Fixer les tarifs participants : forfait d'inscription, repas, soirée", "due": "2027-02-28", "order": 17}, {"id": "t039", "pole": "finances", "title": "Prévoir les recettes annexes : buvette, objets dérivés, livre anniversaire", "due": "2027-02-28", "order": 18}, {"id": "t040", "pole": "finances", "title": "Organiser l'encaissement des inscriptions (en ligne / sur place)", "due": "2027-03-31", "order": 19}, {"id": "t041", "pole": "finances", "title": "Mettre à jour les dépenses engagées à chaque reporting", "due": "", "order": 20}, {"id": "t042", "pole": "finances", "title": "Préparer la caisse et le fonds de caisse pour le week-end", "due": "2027-05-15", "order": 21}, {"id": "t043", "pole": "finances", "title": "Rassembler les factures et justificatifs pour les financeurs", "due": "2027-06-30", "order": 22}, {"id": "t044", "pole": "finances", "title": "Clôturer les comptes de l'événement et présenter le bilan financier", "due": "2027-06-30", "order": 23}, {"id": "t045", "pole": "partenariats", "title": "Vérifier que le CVCF peut délivrer des reçus fiscaux (intérêt général), sinon demander un rescrit", "due": "2026-12-15", "order": 0}, {"id": "t046", "pole": "partenariats", "title": "Rédiger le dossier commun : histoire du club, projet, chiffres attendus, budget, contreparties", "due": "2026-12-15", "order": 1}, {"id": "t047", "pole": "partenariats", "title": "Définir les contreparties par niveau (or, argent, bronze) : visibilité, places à la soirée, cerf-volant aux couleurs, photo aérienne", "due": "2026-12-15", "order": 2}, {"id": "t048", "pole": "partenariats", "title": "Établir la liste des cibles avec un interlocuteur unique par entreprise", "due": "2026-12-10", "order": 3}, {"id": "t049", "pole": "partenariats", "title": "Envoyer le dossier à l'Armée de l'air", "due": "2026-12-15", "order": 4}, {"id": "t050", "pole": "partenariats", "title": "Envoyer le dossier à TotalEnergies", "due": "2026-12-15", "order": 5}, {"id": "t051", "pole": "partenariats", "title": "Envoyer le dossier au Musée de l'Air", "due": "2026-12-15", "order": 6}, {"id": "t052", "pole": "partenariats", "title": "Envoyer le dossier à Airbus", "due": "2026-12-15", "order": 7}, {"id": "t053", "pole": "partenariats", "title": "Repérer les calendriers et formulaires de dépôt du Département et de la Région", "due": "2026-12-15", "order": 8}, {"id": "t054", "pole": "partenariats", "title": "Démarcher les banques régionales (une fois le lieu connu)", "due": "2027-02-28", "order": 9}, {"id": "t055", "pole": "partenariats", "title": "Démarcher Décathlon", "due": "2027-02-28", "order": 10}, {"id": "t056", "pole": "partenariats", "title": "Démarcher les fabricants de cerfs-volants", "due": "2027-02-28", "order": 11}, {"id": "t057", "pole": "partenariats", "title": "Solliciter l'office de tourisme et l'agglomération (communication, hébergement)", "due": "2027-02-28", "order": 12}, {"id": "t058", "pole": "partenariats", "title": "Déposer la demande de subvention au Département", "due": "2027-02-28", "order": 13}, {"id": "t059", "pole": "partenariats", "title": "Déposer la demande de subvention à la Région", "due": "2027-02-28", "order": 14}, {"id": "t060", "pole": "partenariats", "title": "Relancer les entreprises sollicitées sans réponse", "due": "2027-01-31", "order": 15}, {"id": "t061", "pole": "partenariats", "title": "Signer les conventions de mécénat et de sponsoring", "due": "2027-03-31", "order": 16}, {"id": "t062", "pole": "partenariats", "title": "Boucler la liste des partenaires et la transmettre à la communication (logos)", "due": "2027-03-31", "order": 17}, {"id": "t063", "pole": "partenariats", "title": "Préparer l'accueil des partenaires pendant le week-end (places, visibilité)", "due": "2027-05-15", "order": 18}, {"id": "t064", "pole": "partenariats", "title": "Envoyer bilan, photos et justificatifs aux financeurs", "due": "2027-06-30", "order": 19}, {"id": "t065", "pole": "lieu", "title": "Valider la grille de critères de choix du lieu", "due": "2026-12-03", "order": 0}, {"id": "t066", "pole": "lieu", "title": "Valider la liste courte : Châtelaillon, La Turballe, Trouville, Notre-Dame-de-Monts", "due": "2026-12-03", "order": 1}, {"id": "t067", "pole": "lieu", "title": "Désigner qui écrit à chaque maire", "due": "2026-12-03", "order": 2}, {"id": "t068", "pole": "lieu", "title": "Rédiger le courrier type aux maires", "due": "2026-12-10", "order": 3}, {"id": "t069", "pole": "lieu", "title": "Envoyer les courriers aux mairies", "due": "2026-12-15", "order": 4}, {"id": "t070", "pole": "lieu", "title": "Vérifier pour chaque site le régime de vent en mai et l'orientation de la plage", "due": "2027-01-31", "order": 5}, {"id": "t071", "pole": "lieu", "title": "Vérifier les marées (coefficients, horaires) des 22-23 mai 2027", "due": "2027-01-31", "order": 6}, {"id": "t072", "pole": "lieu", "title": "Vérifier la surface de vol et d'accueil du public, selon la marée", "due": "2027-01-31", "order": 7}, {"id": "t073", "pole": "lieu", "title": "Vérifier la hauteur de vol autorisée près des aéroports (La Rochelle, Deauville, La Baule) auprès de la DGAC", "due": "2027-01-31", "order": 8}, {"id": "t074", "pole": "lieu", "title": "Vérifier les zones de nidification et Natura 2000 sur chaque plage", "due": "2027-01-31", "order": 9}, {"id": "t075", "pole": "lieu", "title": "Recenser ce que chaque mairie apporte en nature : terrain, services techniques, salle, sécurité, communication", "due": "2027-01-31", "order": 10}, {"id": "t076", "pole": "lieu", "title": "Vérifier la salle pour la soirée et l'exposition", "due": "2027-01-31", "order": 11}, {"id": "t077", "pole": "lieu", "title": "Vérifier l'accès en train et en voiture, et le parking", "due": "2027-01-31", "order": 12}, {"id": "t078", "pole": "lieu", "title": "Vérifier l'hébergement disponible autour de chaque site (VVF de La Turballe…)", "due": "2027-01-31", "order": 13}, {"id": "t079", "pole": "lieu", "title": "Vérifier les événements concurrents à cette période (articulation avec le festival de Châtelaillon)", "due": "2027-01-31", "order": 14}, {"id": "t080", "pole": "lieu", "title": "Remplir le tableau comparatif des sites", "due": "2027-01-31", "order": 15}, {"id": "t081", "pole": "lieu", "title": "Organiser la visite technique des sites finalistes", "due": "2027-01-31", "order": 16}, {"id": "t082", "pole": "lieu", "title": "Arrêter le lieu", "due": "2027-01-31", "order": 17}, {"id": "t083", "pole": "lieu", "title": "Signer la convention avec la commune", "due": "2027-02-28", "order": 18}, {"id": "t084", "pole": "lieu", "title": "Obtenir les arrêtés municipaux : occupation de la plage, circulation, stationnement", "due": "2027-04-30", "order": 19}, {"id": "t085", "pole": "lieu", "title": "Établir le plan du site : zones de vol, public, stands, secours, parking", "due": "2027-04-30", "order": 20}, {"id": "t086", "pole": "lieu", "title": "Revérifier météo et marées à J-7", "due": "2027-05-15", "order": 21}, {"id": "t087", "pole": "lieu", "title": "Faire l'état des lieux du site avant et après l'événement", "due": "2027-05-21", "order": 22}, {"id": "t088", "pole": "programme", "title": "Esquisser le programme général du week-end", "due": "2027-01-31", "order": 0}, {"id": "t089", "pole": "programme", "title": "Concevoir le vol collectif d'ouverture", "due": "2027-02-28", "order": 1}, {"id": "t090", "pole": "programme", "title": "Créer un cerf-volant « 50 » ou une pièce géante pour l'anniversaire : qui le fabrique, quand", "due": "2027-02-28", "order": 2}, {"id": "t091", "pole": "programme", "title": "Choisir le record à tenter (nombre de cerfs-volants en vol, longueur de train…)", "due": "2027-01-31", "order": 3}, {"id": "t092", "pole": "programme", "title": "Vérifier le record existant et fixer le protocole", "due": "2027-02-28", "order": 4}, {"id": "t093", "pole": "programme", "title": "Décider de la validation : huissier ou Guinness", "due": "2027-02-28", "order": 5}, {"id": "t094", "pole": "programme", "title": "Programmer les démonstrations de pilotage acrobatique et de ballets", "due": "2027-03-31", "order": 6}, {"id": "t095", "pole": "programme", "title": "Organiser les combats de rokkakus", "due": "2027-03-31", "order": 7}, {"id": "t096", "pole": "programme", "title": "Organiser un vol de nuit avec cerfs-volants lumineux", "due": "2027-03-31", "order": 8}, {"id": "t097", "pole": "programme", "title": "Préparer la photo aérienne de groupe des 50 ans par cerf-volant (KAP)", "due": "2027-03-31", "order": 9}, {"id": "t098", "pole": "programme", "title": "Organiser les ateliers de construction pour enfants", "due": "2027-03-31", "order": 10}, {"id": "t099", "pole": "programme", "title": "Contacter les écoles pour les ateliers et scolaires", "due": "2027-02-28", "order": 11}, {"id": "t100", "pole": "programme", "title": "Organiser un concours (règlement, jury, prix)", "due": "2027-03-31", "order": 12}, {"id": "t101", "pole": "programme", "title": "Inviter les cervolistes et équipes internationales", "due": "2027-02-28", "order": 13}, {"id": "t102", "pole": "programme", "title": "Prévoir le plan B sans vent : exposition, cerfs-volants d'intérieur, projections", "due": "2027-03-31", "order": 14}, {"id": "t103", "pole": "programme", "title": "Fixer le programme heure par heure", "due": "2027-03-31", "order": 15}, {"id": "t104", "pole": "programme", "title": "Désigner un speaker / animateur pour le week-end", "due": "2027-03-31", "order": 16}, {"id": "t105", "pole": "programme", "title": "Préparer le matériel du record et des ateliers", "due": "2027-04-30", "order": 17}, {"id": "t106", "pole": "histoire", "title": "Désigner qui rassemble les archives et fixer la date limite", "due": "2026-12-03", "order": 0}, {"id": "t107", "pole": "histoire", "title": "Inventorier les archives : photos, documents, numéros du Lucane, objets", "due": "2027-01-31", "order": 1}, {"id": "t108", "pole": "histoire", "title": "Retrouver les archives papier des débuts du club", "due": "2027-01-31", "order": 2}, {"id": "t109", "pole": "histoire", "title": "Numériser les archives", "due": "2027-03-31", "order": 3}, {"id": "t110", "pole": "histoire", "title": "Récupérer les anciens sites web via la Wayback Machine", "due": "2027-02-28", "order": 4}, {"id": "t111", "pole": "histoire", "title": "Recueillir les témoignages des fondateurs et des anciens présidents", "due": "2027-03-31", "order": 5}, {"id": "t112", "pole": "histoire", "title": "Établir la frise chronologique des 50 ans", "due": "2027-02-28", "order": 6}, {"id": "t113", "pole": "histoire", "title": "Sélectionner les cerfs-volants emblématiques à exposer et contacter leurs propriétaires", "due": "2027-03-31", "order": 7}, {"id": "t114", "pole": "histoire", "title": "Concevoir l'exposition des 50 ans (scénographie, panneaux)", "due": "2027-03-31", "order": 8}, {"id": "t115", "pole": "histoire", "title": "Décider : numéro spécial du Lucane ou livre anniversaire", "due": "2027-01-31", "order": 9}, {"id": "t116", "pole": "histoire", "title": "Rédiger et mettre en page le numéro spécial ou le livre", "due": "2027-04-30", "order": 10}, {"id": "t117", "pole": "histoire", "title": "Réaliser le film ou le diaporama", "due": "2027-04-30", "order": 11}, {"id": "t118", "pole": "histoire", "title": "Préparer l'hommage aux disparus", "due": "2027-04-30", "order": 12}, {"id": "t119", "pole": "histoire", "title": "Choisir et commander les souvenirs : timbre personnalisé, pin's, médaille", "due": "2027-03-31", "order": 13}, {"id": "t120", "pole": "histoire", "title": "Imprimer les supports de l'exposition", "due": "2027-04-30", "order": 14}, {"id": "t121", "pole": "histoire", "title": "Monter et démonter l'exposition (équipe, horaires)", "due": "2027-05-15", "order": 15}, {"id": "t122", "pole": "intendance", "title": "Négocier la convention d'hébergement avec le VVF ou les hôtels", "due": "2027-02-28", "order": 0}, {"id": "t123", "pole": "intendance", "title": "Établir la liste des campings et hôtels à proximité", "due": "2027-02-28", "order": 1}, {"id": "t124", "pole": "intendance", "title": "Obtenir un tarif négocié pour les membres", "due": "2027-02-28", "order": 2}, {"id": "t125", "pole": "intendance", "title": "Choisir le traiteur et la salle du banquet du samedi soir", "due": "2027-03-31", "order": 3}, {"id": "t126", "pole": "intendance", "title": "Recenser les régimes alimentaires", "due": "2027-04-30", "order": 4}, {"id": "t127", "pole": "intendance", "title": "Organiser les repas du midi", "due": "2027-04-30", "order": 5}, {"id": "t128", "pole": "intendance", "title": "Organiser les repas des bénévoles", "due": "2027-04-30", "order": 6}, {"id": "t129", "pole": "intendance", "title": "Organiser les navettes depuis la gare", "due": "2027-04-30", "order": 7}, {"id": "t130", "pole": "intendance", "title": "Organiser le parking et le covoiturage", "due": "2027-04-30", "order": 8}, {"id": "t131", "pole": "intendance", "title": "Organiser le transport du matériel", "due": "2027-04-30", "order": 9}, {"id": "t132", "pole": "intendance", "title": "Inventorier et réserver le matériel : barnums, mâts, sono, signalétique", "due": "2027-04-30", "order": 10}, {"id": "t133", "pole": "intendance", "title": "Prévoir l'électricité et les toilettes sur le site", "due": "2027-04-30", "order": 11}, {"id": "t134", "pole": "intendance", "title": "Prévoir le stockage des cerfs-volants sur place", "due": "2027-04-30", "order": 12}, {"id": "t135", "pole": "intendance", "title": "Établir la logistique détaillée (qui, quoi, où, quand)", "due": "2027-04-30", "order": 13}, {"id": "t136", "pole": "intendance", "title": "Confirmer les effectifs au traiteur et à l'hébergement", "due": "2027-05-15", "order": 14}, {"id": "t137", "pole": "intendance", "title": "Organiser le montage et le démontage du site", "due": "2027-05-15", "order": 15}, {"id": "t138", "pole": "securite", "title": "Décider de la procédure d'annulation météo et de qui la déclenche", "due": "2026-12-03", "order": 0}, {"id": "t139", "pole": "securite", "title": "Faire valider la hauteur de vol maximale par l'aviation civile (DGAC)", "due": "2027-02-28", "order": 1}, {"id": "t140", "pole": "securite", "title": "Vérifier les contraintes environnementales (Natura 2000, nidification)", "due": "2027-01-31", "order": 2}, {"id": "t141", "pole": "securite", "title": "Déclarer la manifestation en mairie", "due": "2027-02-28", "order": 3}, {"id": "t142", "pole": "securite", "title": "Déposer le dossier de sécurité en préfecture si la fréquentation le demande", "due": "2027-04-30", "order": 4}, {"id": "t143", "pole": "securite", "title": "Souscrire l'assurance responsabilité civile de l'organisateur", "due": "2027-04-30", "order": 5}, {"id": "t144", "pole": "securite", "title": "Vérifier que les participants sont couverts par une assurance", "due": "2027-04-30", "order": 6}, {"id": "t145", "pole": "securite", "title": "Réserver le poste de secours", "due": "2027-04-30", "order": 7}, {"id": "t146", "pole": "securite", "title": "Demander la licence temporaire de buvette", "due": "2027-04-30", "order": 8}, {"id": "t147", "pole": "securite", "title": "Faire la déclaration SACEM s'il y a de la musique", "due": "2027-04-30", "order": 9}, {"id": "t148", "pole": "securite", "title": "Établir le plan de sécurité : séparation zones de vol / public, distances, balisage", "due": "2027-04-30", "order": 10}, {"id": "t149", "pole": "securite", "title": "Rédiger les consignes de sécurité pour les pilotes", "due": "2027-04-30", "order": 11}, {"id": "t150", "pole": "securite", "title": "Briefer les équipes sur la sécurité et les numéros d'urgence", "due": "2027-05-15", "order": 12}, {"id": "t151", "pole": "com", "title": "Annoncer la date aux membres pour qu'ils la bloquent", "due": "2026-12-15", "order": 0}, {"id": "t152", "pole": "com", "title": "Créer l'identité visuelle des 50 ans (logo)", "due": "2027-01-31", "order": 1}, {"id": "t153", "pole": "com", "title": "Réaliser l'affiche", "due": "2027-02-28", "order": 2}, {"id": "t154", "pole": "com", "title": "Créer la page web des 50 ans", "due": "2027-02-28", "order": 3}, {"id": "t155", "pole": "com", "title": "Mettre en place les inscriptions en ligne", "due": "2027-03-31", "order": 4}, {"id": "t156", "pole": "com", "title": "Établir le calendrier de publication sur les réseaux sociaux", "due": "2027-02-28", "order": 5}, {"id": "t157", "pole": "com", "title": "Rédiger le dossier de presse", "due": "2027-03-31", "order": 6}, {"id": "t158", "pole": "com", "title": "Envoyer le communiqué de presse", "due": "2027-04-30", "order": 7}, {"id": "t159", "pole": "com", "title": "Nouer un partenariat avec un média (presse régionale, radio locale)", "due": "2027-03-31", "order": 8}, {"id": "t160", "pole": "com", "title": "Informer les clubs étrangers (version anglaise)", "due": "2027-02-28", "order": 9}, {"id": "t161", "pole": "com", "title": "Organiser la couverture photo et vidéo : qui, quoi", "due": "2027-04-30", "order": 10}, {"id": "t162", "pole": "com", "title": "Imprimer les supports : affiches, flyers, banderoles, signalétique", "due": "2027-04-30", "order": 11}, {"id": "t163", "pole": "com", "title": "Inviter la presse sur place", "due": "2027-05-15", "order": 12}, {"id": "t164", "pole": "com", "title": "Publier le compte rendu, les photos et l'article dans le Lucane", "due": "2027-06-30", "order": 13}, {"id": "t165", "pole": "benevoles", "title": "Envoyer les invitations aux membres", "due": "2026-12-15", "order": 0}, {"id": "t166", "pole": "benevoles", "title": "Fixer les conditions d'inscription et le montant du forfait", "due": "2027-02-28", "order": 1}, {"id": "t167", "pole": "benevoles", "title": "Inviter les clubs français et étrangers", "due": "2027-02-28", "order": 2}, {"id": "t168", "pole": "benevoles", "title": "Inviter les invités d'honneur et les élus", "due": "2027-03-31", "order": 3}, {"id": "t169", "pole": "benevoles", "title": "Ouvrir les inscriptions", "due": "2027-03-31", "order": 4}, {"id": "t170", "pole": "benevoles", "title": "Suivre les inscriptions et relancer", "due": "2027-04-30", "order": 5}, {"id": "t171", "pole": "benevoles", "title": "Estimer le nombre de bénévoles nécessaires", "due": "2027-02-28", "order": 6}, {"id": "t172", "pole": "benevoles", "title": "Recruter les bénévoles", "due": "2027-03-31", "order": 7}, {"id": "t173", "pole": "benevoles", "title": "Établir le planning des bénévoles", "due": "2027-04-30", "order": 8}, {"id": "t174", "pole": "benevoles", "title": "Commander les tenues des bénévoles", "due": "2027-04-30", "order": 9}, {"id": "t175", "pole": "benevoles", "title": "Préparer l'accueil : badges, kit de bienvenue, point d'information", "due": "2027-04-30", "order": 10}, {"id": "t176", "pole": "benevoles", "title": "Briefer les bénévoles", "due": "2027-05-15", "order": 11}];
 const MILESTONES = [
   {date:"2026-12-03",title:"Réunion de lancement du comité"},
   {date:"2026-12-15",title:"Courriers aux mairies · dossiers mécénat envoyés"},
@@ -400,6 +466,11 @@ function toast(msg){ const t = $("#toast"); t.textContent = msg; t.classList.add
 
 /* ---------- Accès aux données : serveur Netlify, sinon mode démo local ---------- */
 const DEMO_KEY = "cvcf50-demo";
+function seedTasksLocal(demo){
+  const now = new Date().toISOString();
+  const doneDemo = demo ? ["t001","t002","t005","t061","t062","t037"] : [];
+  return DEFAULT_TASKS.map(t => ({...t, done: doneDemo.includes(t.id), doneBy: doneDemo.includes(t.id) ? "Exemple" : "", doneAt: doneDemo.includes(t.id) ? now : "", createdAt: now}));
+}
 function demoSeed(){
   const now = Date.now();
   const d = days => new Date(now - days*864e5).toISOString();
@@ -407,6 +478,7 @@ function demoSeed(){
   return {
     poles: DEFAULT_POLES.map(p => ({...p})),
     members: [...DEFAULT_MEMBERS],
+    tasks: seedTasksLocal(true),
     posts: [
       {id:"x1",pole:"lieu",author:"Exemple",status:"warn",createdAt:d(2),
        text:"Courriers partis aux mairies de Châtelaillon, La Turballe et Trouville.\nLa Turballe : premier contact positif, le VVF a des disponibilités pour le week-end.\nChâtelaillon : il faut voir comment s'articuler avec leur propre festival.",
@@ -465,6 +537,22 @@ const API = {
     if (this.mode === "demo") { S.members = members; this.saveDemo(); return; }
     S.members = await this.call("PUT","members",members);
   },
+  async addTask(t){
+    if (this.mode === "demo") { const it = {...t, id:"d"+Date.now(), done:false, doneBy:"", doneAt:"", createdAt:new Date().toISOString()}; S.tasks.push(it); this.saveDemo(); return it; }
+    const it = await this.call("POST","tasks",t); S.tasks.push(it); return it;
+  },
+  async patchTask(id, patch){
+    const i = S.tasks.findIndex(t => t.id === id); if (i < 0) return;
+    if (this.mode === "demo") {
+      const n = {...S.tasks[i]};
+      if (patch.title) n.title = patch.title;
+      if (patch.pole) n.pole = patch.pole;
+      if (typeof patch.due === "string") n.due = patch.due;
+      if (typeof patch.done === "boolean") { n.done = patch.done; n.doneBy = patch.done ? (patch.author||"") : ""; n.doneAt = patch.done ? new Date().toISOString() : ""; }
+      S.tasks[i] = n; this.saveDemo(); return n;
+    }
+    const n = await this.call("PATCH","tasks/" + encodeURIComponent(id), patch); S.tasks[i] = n; return n;
+  },
   async listBackups(){ return this.mode === "demo" ? null : this.call("GET","backups"); },
   async backupNow(){ return this.call("POST","backups"); },
   async restore(key){ return this.call("POST","restore/" + encodeURIComponent(key)); },
@@ -483,7 +571,7 @@ const API = {
 };
 
 /* ---------- État ---------- */
-let S = {poles:[], members:[], posts:[], events:[]};
+let S = {poles:[], members:[], posts:[], events:[], tasks:[]};
 let calCursor = (() => { const t = today0(); return new Date(t.getFullYear(), t.getMonth(), 1); })();
 
 const poleById = id => S.poles.find(p => p.id === id);
@@ -491,6 +579,17 @@ const poleColor = id => { const i = S.poles.findIndex(p => p.id === id); return 
 const poleName = id => (poleById(id) || {name:"(domaine supprimé)"}).name;
 const sortedPosts = () => [...S.posts].sort((a,b) => b.createdAt.localeCompare(a.createdAt));
 const latestByPole = () => { const m = {}; for (const p of sortedPosts()) if (!m[p.pole]) m[p.pole] = p; return m; };
+
+const todayKey = () => iso(today0());
+const isLate = t => !t.done && t.due && t.due < todayKey();
+function taskStats(list){
+  const total = list.length, done = list.filter(t => t.done).length, late = list.filter(isLate).length;
+  return {total, done, late, pct: total ? Math.round(done*100/total) : 0};
+}
+const tasksOf = poleId => S.tasks.filter(t => t.pole === poleId);
+const sortTasks = list => [...list].sort((a,b) =>
+  (a.done - b.done) || ((a.due||"9999") .localeCompare(b.due||"9999")) || ((a.order??999) - (b.order??999)) || a.title.localeCompare(b.title));
+const shortDate = s => parseIso(s).toLocaleDateString("fr-FR",{day:"numeric",month:"short"});
 
 function nextReporting(){
   const t = today0(), d = t.getDate();
@@ -508,6 +607,8 @@ function renderKpis(){
   const latest = latestByPole();
   const alerts = S.poles.filter(p => latest[p.id] && latest[p.id].status !== "ok").length;
   $("#k-alerts").textContent = alerts + " / " + S.poles.length;
+  const ts = taskStats(S.tasks);
+  $("#k-tasks").textContent = ts.total ? `${ts.done} / ${ts.total}` : "—";
   const budget = Object.values(latest).reduce((s,p) => s + (typeof p.budget === "number" ? p.budget : 0), 0);
   $("#k-budget").textContent = fmtMoney(budget);
 }
@@ -525,6 +626,9 @@ function renderDash(){
         <h3>${esc(p.name)}</h3>${st}
       </div>
       <div class="lead">${p.lead ? "Responsable : " + esc(p.lead) : '<span class="late">Responsable à désigner</span>'}</div>
+      ${(() => { const st = taskStats(tasksOf(p.id)); if (!st.total) return ""; return `<div data-road="${esc(p.id)}" style="cursor:pointer" title="Voir la feuille de route">
+        <div class="prog"><i style="width:${st.pct}%"></i></div>
+        <div class="tasksum"><span>${st.done}/${st.total} tâches · ${st.pct} %</span>${st.late ? `<span class="late">${st.late} en retard</span>` : ""}</div></div>`; })()}
       <div class="excerpt">${l ? esc(l.text) : '<span class="muted">—</span>'}</div>
       ${l && l.issues ? `<div style="font-size:13px;color:var(--block)">⚑ ${esc(l.issues.split("\n")[0])}</div>` : ""}
       <div class="foot">
@@ -565,6 +669,55 @@ function renderFeed(){
   }).join("");
 }
 
+function renderRoadFilter(){
+  const sel = $("#r-pole"), cur = sel.value;
+  sel.innerHTML = `<option value="">Tous les domaines</option>` + S.poles.map(p => `<option value="${esc(p.id)}">${esc(p.name)}</option>`).join("");
+  sel.value = cur;
+}
+let roadOpen = null; // ensemble des domaines dépliés
+function renderRoad(openAll){
+  const all = taskStats(S.tasks);
+  $("#road-head").innerHTML = `<div><div class="big">${all.done} / ${all.total}</div><div class="muted" style="font-size:13px">tâches faites</div></div>
+    <div class="prog" style="--c:var(--ok)"><i style="width:${all.pct}%"></i></div>
+    <div style="font-size:14px"><b>${all.pct} %</b>${all.late ? ` · <span class="late">${all.late} en retard</span>` : ""}</div>`;
+  const fp = $("#r-pole").value, fs = $("#r-status").value, q = $("#r-q").value.trim().toLowerCase();
+  const soon = iso(new Date(today0().getTime() + 15*864e5));
+  const keep = t => (!q || t.title.toLowerCase().includes(q)) && (
+    fs === "" ? true : fs === "done" ? t.done : fs === "todo" ? !t.done : fs === "late" ? isLate(t) : fs === "soon" ? (!t.done && t.due && t.due <= soon) : true);
+  const poles = S.poles.filter(p => !fp || p.id === fp);
+  if (roadOpen === null || openAll) roadOpen = new Set(fp ? [fp] : (openAll ? S.poles.map(p => p.id) : []));
+  const html = poles.map(p => {
+    const list = tasksOf(p.id), st = taskStats(list), shown = sortTasks(list.filter(keep));
+    if (!shown.length && (q || fs) && !fp) return "";
+    const color = poleColor(p.id);
+    const items = shown.map(t => {
+      const cls = ["task", t.done ? "done" : "", isLate(t) ? "late" : ""].join(" ");
+      const meta = t.done ? `<span class="meta">✓ ${esc(t.doneBy || "fait")}${t.doneAt ? " · " + new Date(t.doneAt).toLocaleDateString("fr-FR",{day:"numeric",month:"short"}) : ""}</span>` : "";
+      return `<li class="${cls}" data-id="${esc(t.id)}">
+        <input type="checkbox" data-toggle ${t.done ? "checked" : ""} aria-label="Fait">
+        <span class="tt">${esc(t.title)}${meta}</span>
+        <input type="date" class="due-in" data-due value="${esc(t.due || "")}" title="Échéance">
+        <span class="acts"><button data-edit title="Modifier l'intitulé">✎</button><button data-move title="Changer de domaine">⇄</button><button data-deltask title="Supprimer">✕</button></span>
+      </li>`;
+    }).join("") || `<li class="task"><span></span><span class="tt muted">Aucune tâche pour ce filtre.</span></li>`;
+    const open = roadOpen.has(p.id) ? "open" : "";
+    return `<details class="card road" style="--c:${color}" data-pole="${esc(p.id)}" ${open}>
+      <summary>
+        <div><h3>${esc(p.name)}</h3><div class="sub">${p.lead ? "Responsable : " + esc(p.lead) : '<span class="late">Responsable à désigner</span>'}</div></div>
+        <div class="right"><div class="prog" style="--c:${color}"><i style="width:${st.pct}%"></i></div>
+          <div style="margin-top:4px">${st.done}/${st.total} · ${st.pct} %${st.late ? ` · <span class="late">${st.late} en retard</span>` : ""}</div></div>
+      </summary>
+      <ul class="tasks">${items}</ul>
+      <form class="addtask" data-add="${esc(p.id)}">
+        <input type="text" placeholder="Ajouter une tâche à ce domaine…" required>
+        <input type="date" title="Échéance (facultatif)">
+        <button class="btn btn-primary btn-small" type="submit">Ajouter</button>
+      </form>
+    </details>`;
+  }).join("");
+  $("#road").innerHTML = html || `<div class="card empty">Aucune tâche ne correspond.</div>`;
+}
+
 function calendarItems(){
   // Toutes les dates à afficher, indexées par jour ISO
   const m = {};
@@ -577,6 +730,10 @@ function calendarItems(){
     let guard = 0;
     while (d <= end && guard++ < 60) { add(iso(d), {kind:"ev", title:e.title, pole:e.pole, id:e.id, note:e.note}); d = new Date(d.getFullYear(), d.getMonth(), d.getDate()+1); }
   }
+  // Tâches non faites : regroupées par date
+  const byDate = {};
+  for (const t of S.tasks) if (!t.done && t.due) (byDate[t.due] = byDate[t.due] || []).push(t);
+  for (const [d, list] of Object.entries(byDate)) add(d, {kind:"task", title:`${list.length} tâche${list.length>1?"s":""} à échéance`, count:list.length});
   // Échéance du dernier point de chaque domaine uniquement (évite les doublons)
   const latest = latestByPole();
   for (const p of Object.values(latest)) if (p.deadline) add(p.deadline, {kind:"dl", title:(p.deadlineLabel || "Échéance") , pole:p.pole});
@@ -602,7 +759,7 @@ function renderCal(){
     if (isRep) inner += `<div class="ev rep">Reporting</div>`;
     for (const it of list.slice(0, 3)) {
       const style = it.pole ? `style="--c:${poleColor(it.pole)}"` : "";
-      const c = it.kind === "big" ? "big" : it.kind === "ms" ? "ms" : "";
+      const c = it.kind === "big" ? "big" : it.kind === "ms" ? "ms" : it.kind === "task" ? "task-ev" : "";
       inner += `<div class="ev ${c}" ${style} title="${esc(it.title)}">${it.kind === "dl" ? "⏱ " : ""}${esc(it.title)}</div>`;
     }
     if (list.length > 3) inner += `<div class="muted" style="font-size:11px">+${list.length-3} autre(s)</div>`;
@@ -617,7 +774,7 @@ function renderCal(){
   for (const k of up) for (const it of items[k]) rows.push({k, it});
   $("#upcoming").innerHTML = rows.slice(0, 10).map(({k,it}) => {
     const d = parseIso(k);
-    const sub = it.pole ? poleName(it.pole) : (it.kind === "big" ? "Événement" : "Jalon");
+    const sub = it.pole ? poleName(it.pole) : (it.kind === "big" ? "Événement" : it.kind === "task" ? "Feuille de route" : "Jalon");
     const del = it.kind === "ev" ? ` <button class="del" style="font-size:11px" data-del-event="${esc(it.id)}">supprimer</button>` : "";
     return `<div class="item"><div class="d"><b>${d.getDate()}</b><span>${d.toLocaleDateString("fr-FR",{month:"short"})}</span></div>
       <div class="t">${esc(it.title)}<small>${esc(sub)}${it.note ? " · " + esc(it.note) : ""}${del}</small></div></div>`;
@@ -650,7 +807,7 @@ async function renderBackups(){
     if (!list || !list.length) { box.innerHTML = '<div class="b muted">Pas encore de sauvegarde. La première sera faite cette nuit, ou maintenant avec le bouton ci-dessus.</div>'; return; }
     box.innerHTML = list.map(b => {
       const d = b.savedAt ? new Date(b.savedAt).toLocaleString("fr-FR",{day:"numeric",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"}) : b.key;
-      const n = (b.posts ?? "?") + " points · " + (b.events ?? "?") + " dates";
+      const n = (b.posts ?? "?") + " points · " + (b.events ?? "?") + " dates" + (b.tasks != null ? ` · ${b.done ?? 0}/${b.tasks} tâches` : "");
       return `<div class="b"><span class="when"><b>${esc(d)}</b><br><span class="muted">${esc(n)}</span></span>
         <span class="tag">${esc(REASONS[b.reason] || b.reason || "")}</span>
         <button class="btn btn-ghost btn-small" data-dl="${esc(b.key)}">Télécharger</button>
@@ -666,7 +823,7 @@ function fillPoleSelects(){
 }
 
 function renderAll(){
-  renderKpis(); renderDash(); renderFeedFilter(); renderFeed(); renderCal(); renderSettings(); fillPoleSelects();
+  renderKpis(); renderDash(); renderFeedFilter(); renderFeed(); renderRoadFilter(); renderRoad(); renderCal(); renderSettings(); fillPoleSelects();
   const b = $("#banner");
   if (API.mode === "demo") {
     b.hidden = false;
@@ -701,6 +858,8 @@ $("#b-new").addEventListener("click", () => openPost());
 $("#c-add").addEventListener("click", () => openEvent());
 
 $("#poles").addEventListener("click", e => {
+  const rd = e.target.closest("[data-road]");
+  if (rd) { $("#r-pole").value = rd.dataset.road; $("#r-status").value = ""; renderRoad(true); showView("road"); return; }
   const w = e.target.closest("[data-write]");
   if (w) { openPost(w.dataset.write); return; }
   const card = e.target.closest("[data-pole]");
@@ -747,6 +906,59 @@ $("#upcoming").addEventListener("click", async e => {
   try { await API.del("events", b.dataset.delEvent); renderAll(); toast("Supprimé"); } catch (err) { toast(err.message); }
 });
 $("#f-pole").addEventListener("change", renderFeed);
+$("#r-pole").addEventListener("change", () => renderRoad(true));
+$("#r-status").addEventListener("change", () => renderRoad());
+$("#r-q").addEventListener("input", () => { roadOpen = new Set(S.poles.map(p => p.id)); renderRoad(); });
+$("#r-expand").addEventListener("click", () => { roadOpen = new Set(S.poles.map(p => p.id)); renderRoad(); });
+$("#r-collapse").addEventListener("click", () => { roadOpen = new Set(); renderRoad(); });
+$("#road").addEventListener("toggle", e => {
+  const d = e.target.closest && e.target.closest("details.road"); if (!d) return;
+  if (d.open) roadOpen.add(d.dataset.pole); else roadOpen.delete(d.dataset.pole);
+}, true);
+const me = () => store.get("cvcf50-name") || "";
+async function afterTaskChange(){ renderKpis(); renderDash(); renderRoad(); renderCal(); }
+$("#road").addEventListener("change", async e => {
+  const li = e.target.closest("li[data-id]"); if (!li) return;
+  const id = li.dataset.id;
+  try {
+    if (e.target.matches("[data-toggle]")) {
+      if (e.target.checked && !me()) toast("Astuce : indique ton nom dans Réglages pour signer tes tâches");
+      await API.patchTask(id, {done: e.target.checked, author: me()});
+    } else if (e.target.matches("[data-due]")) {
+      await API.patchTask(id, {due: e.target.value || ""});
+    } else return;
+    await afterTaskChange();
+  } catch (err) { toast(err.message); renderRoad(); }
+});
+$("#road").addEventListener("click", async e => {
+  const li = e.target.closest("li[data-id]"); if (!li) return;
+  const id = li.dataset.id, t = S.tasks.find(x => x.id === id); if (!t) return;
+  try {
+    if (e.target.closest("[data-edit]")) {
+      const v = prompt("Intitulé de la tâche :", t.title);
+      if (v && v.trim() && v.trim() !== t.title) { await API.patchTask(id, {title: v.trim()}); await afterTaskChange(); }
+    } else if (e.target.closest("[data-move]")) {
+      const list = S.poles.map((p,i) => `${i+1}. ${p.name}`).join("\n");
+      const v = prompt(`Déplacer vers quel domaine ? (numéro)\n\n${list}`);
+      const p = S.poles[Number(v) - 1];
+      if (p && p.id !== t.pole) { await API.patchTask(id, {pole: p.id}); await afterTaskChange(); toast("Tâche déplacée"); }
+    } else if (e.target.closest("[data-deltask]")) {
+      if (!confirm("Supprimer cette tâche ?\n\n" + t.title)) return;
+      await API.del("tasks", id); await afterTaskChange(); toast("Tâche supprimée");
+    }
+  } catch (err) { toast(err.message); }
+});
+$("#road").addEventListener("submit", async e => {
+  const f = e.target.closest("form[data-add]"); if (!f) return;
+  e.preventDefault();
+  const [ti, di] = f.querySelectorAll("input");
+  const title = ti.value.trim(); if (!title) return;
+  try {
+    await API.addTask({pole: f.dataset.add, title, due: di.value || "", author: me(), order: 999});
+    roadOpen.add(f.dataset.add); await afterTaskChange(); toast("Tâche ajoutée");
+    const nf = document.querySelector(`form[data-add="${CSS.escape(f.dataset.add)}"] input[type=text]`); if (nf) nf.focus();
+  } catch (err) { toast(err.message); }
+});
 $("#f-status").addEventListener("change", renderFeed);
 
 $("#cal").addEventListener("click", e => { const d = e.target.closest("[data-day]"); if (d) openEvent(d.dataset.day); });
@@ -810,6 +1022,7 @@ async function boot(){
     S.poles = S.poles && S.poles.length ? S.poles : DEFAULT_POLES.map(p => ({...p}));
     S.members = Array.isArray(S.members) ? S.members : [...DEFAULT_MEMBERS];
     S.posts = S.posts || []; S.events = S.events || [];
+    if (!Array.isArray(S.tasks)) { S.tasks = API.mode === "demo" ? seedTasksLocal(true) : []; if (API.mode === "demo") API.saveDemo(); }
     renderAll();
   } catch (e) {
     if (e.auth) {
