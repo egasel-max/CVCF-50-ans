@@ -67,14 +67,15 @@ async function readAll(store) {
     return items.filter(Boolean);
   };
   await seedTasks(store);
-  const [poles, members, posts, events, tasks] = await Promise.all([
+  const [poles, members, posts, events, tasks, meetings] = await Promise.all([
     store.get("poles", { type: "json" }),
     store.get("members", { type: "json" }),
     loadAll("post/"),
     loadAll("event/"),
     loadAll("task/"),
+    loadAll("meeting/"),
   ]);
-  return { poles: poles || DEFAULT_POLES, members: members || DEFAULT_MEMBERS, posts, events, tasks };
+  return { poles: poles || DEFAULT_POLES, members: members || DEFAULT_MEMBERS, posts, events, tasks, meetings };
 }
 
 // Charge la feuille de route par défaut une seule fois (ensuite, chacun l'édite librement)
@@ -96,7 +97,7 @@ export async function makeBackup(store, backups, reason) {
   const savedAt = new Date().toISOString();
   const key = savedAt.replace(/[:.]/g, "-") + "_" + reason;
   await backups.setJSON(key, { savedAt, reason, ...data }, {
-    metadata: { savedAt, reason, posts: data.posts.length, events: data.events.length, tasks: data.tasks.length, done: data.tasks.filter((t) => t.done).length },
+    metadata: { savedAt, reason, posts: data.posts.length, events: data.events.length, tasks: data.tasks.length, done: data.tasks.filter((t) => t.done).length, meetings: data.meetings.length },
   });
   const { blobs } = await backups.list();
   const keys = blobs.map((b) => b.key).sort();
@@ -148,6 +149,7 @@ export default async (req) => {
         id: uid(), pole: str(b.pole, 40), title: str(b.title, 500).trim(), due: isoDate(b.due),
         order: Number.isFinite(Number(b.order)) ? Number(b.order) : 999,
         done: false, doneBy: "", doneAt: "", createdBy: str(b.author, 80), createdAt: new Date().toISOString(),
+        source: str(b.source, 160), sourceMeeting: str(b.sourceMeeting, 40),
       };
       if (!item.pole || !item.title) return json({ error: "Domaine et intitulé obligatoires" }, 400);
       await store.setJSON(`task/${item.id}`, item);
@@ -172,8 +174,33 @@ export default async (req) => {
       return json(next);
     }
 
-    if (req.method === "DELETE" && (res === "posts" || res === "events" || res === "tasks") && id) {
-      await store.delete(`${({ posts: "post", events: "event", tasks: "task" })[res]}/${id}`);
+    if (req.method === "POST" && res === "meetings") {
+      const raw = await req.text();
+      if (raw.length > 300000) return json({ error: "PV trop volumineux" }, 413);
+      const b = JSON.parse(raw);
+      const item = { ...b, id: uid(), status: "draft", createdAt: new Date().toISOString() };
+      if (!isoDate(item.date)) return json({ error: "Date obligatoire" }, 400);
+      await store.setJSON(`meeting/${item.id}`, item);
+      return json(item, 201);
+    }
+
+    if (req.method === "PUT" && res === "meetings" && id) {
+      const cur = await store.get(`meeting/${id}`, { type: "json" });
+      if (!cur) return json({ error: "Réunion introuvable" }, 404);
+      const raw = await req.text();
+      if (raw.length > 300000) return json({ error: "PV trop volumineux" }, 413);
+      const b = JSON.parse(raw);
+      if (cur.status === "final" && b.status !== "draft") {
+        return json({ error: "Ce PV est validé : rouvre-le avant de le modifier" }, 409);
+      }
+      const next = { ...b, id, createdAt: cur.createdAt, updatedAt: new Date().toISOString() };
+      if (!isoDate(next.date)) return json({ error: "Date obligatoire" }, 400);
+      await store.setJSON(`meeting/${id}`, next);
+      return json(next);
+    }
+
+    if (req.method === "DELETE" && (res === "posts" || res === "events" || res === "tasks" || res === "meetings") && id) {
+      await store.delete(`${({ posts: "post", events: "event", tasks: "task", meetings: "meeting" })[res]}/${id}`);
       return json({ ok: true });
     }
 
@@ -229,7 +256,7 @@ export default async (req) => {
       if (!snap) return json({ error: "Sauvegarde introuvable" }, 404);
       // Filet de sécurité : on sauvegarde l'état actuel avant d'écraser
       await makeBackup(store, backups, "avant-restauration");
-      for (const prefix of ["post/", "event/", "task/"]) {
+      for (const prefix of ["post/", "event/", "task/", "meeting/"]) {
         const { blobs } = await store.list({ prefix });
         await Promise.all(blobs.map((b) => store.delete(b.key)));
       }
@@ -239,6 +266,7 @@ export default async (req) => {
         ...(snap.posts || []).filter((p) => p && p.id).map((p) => [`post/${p.id}`, p]),
         ...(snap.events || []).filter((e) => e && e.id).map((e) => [`event/${e.id}`, e]),
         ...(snap.tasks || []).filter((t) => t && t.id).map((t) => [`task/${t.id}`, t]),
+        ...(snap.meetings || []).filter((m) => m && m.id).map((m) => [`meeting/${m.id}`, m]),
       ];
       for (let i = 0; i < writes.length; i += 25) {
         await Promise.all(writes.slice(i, i + 25).map(([k, v]) => store.setJSON(k, v)));
